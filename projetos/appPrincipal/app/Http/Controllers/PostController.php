@@ -30,6 +30,9 @@ class PostController extends Controller
     }
 
     public function showCreateForm() {
+        /*if (!auth()->check()) {
+            return redirect('/');
+        }*/ //funcionaria, mas há um jeito melhor com middleware
         return view('create-post');
     }
 }

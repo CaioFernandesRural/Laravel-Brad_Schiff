@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ControllerPablo;
+use App\Http\Controllers\TesteController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,13 +17,20 @@ use App\Http\Controllers\UserController;
 |
 */
 
+//teste
+Route::get('/teste', [TesteController::class, 'mostrar']);
+Route::get('/teste2', [ControllerPablo::class, 'pablo']);
+
 //User
-Route::get('/', [UserController::class, "showCorrectHomepage"]);
-Route::post('/register', [UserController::class, "register"]);
-Route::post('/login', [UserController::class, "login"]);
-Route::post('/logout', [UserController::class, "logout"]);
+Route::get('/', [UserController::class, "showCorrectHomepage"])->name('login'); //nomeia como a rota de login
+Route::post('/register', [UserController::class, "register"])->middleware('guest');
+Route::post('/login', [UserController::class, "login"])->middleware('guest');
+Route::post('/logout', [UserController::class, "logout"])->middleware('mustBeLoggedIn');
 
 //Blog
-Route::get('/create-post', [PostController::class, 'showCreateForm']);
-Route::get('/post/{post}', [PostController::class, 'viewSinglePost']);
+Route::get('/create-post', [PostController::class, 'showCreateForm'])->middleware('mustBeLoggedIn');// se não estiver autenticado manda pra rota de login
+Route::get('/post/{post}', [PostController::class, 'viewSinglePost'])->middleware('mustBeLoggedIn');
 Route::post('/create-post', [PostController::class, 'storeNewPost']);
+
+//Perfil
+Route::get('/profile/{user:username}', [UserController::class, 'profile']);

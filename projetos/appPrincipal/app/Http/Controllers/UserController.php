@@ -9,6 +9,15 @@ use Illuminate\Validation\Rule;
 class UserController extends Controller
 {
 
+    public function profile(User $user){ //esta variável é um objeto usuário instanciado
+        return view('profile-posts', [
+            'username' => $user->username,
+            'posts' => $user->posts()->get(),
+            'postCount' => $user->posts()->count()
+        ]);
+        //passa todos os posts, a relação foi definida na classe user
+    }
+
     public function logout(){
         auth()->logout();
         return redirect('/')->with('success', 'saiu com sucesso. seu merda');
