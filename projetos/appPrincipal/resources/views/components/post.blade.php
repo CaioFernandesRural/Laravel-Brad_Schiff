@@ -5,6 +5,6 @@
         @if (!isset($hideAuthor))
         by {{$post->user->username}}
         @endif
-        on {{$post->created_at->format('n/j/Y')}}
+        on {{$post->created_at->format('j/n/Y')}}
     </span>
 </a>

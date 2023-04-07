@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\OurExampleEvent;
+use App\Models\Post;
 use App\Models\User;
 use App\Models\Follow;
 use Illuminate\Http\Request;
+use App\Events\OurExampleEvent;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Cache;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
-
     public function storeAvatar(Request $request){
 
         $request->validate([
@@ -65,7 +66,7 @@ class UserController extends Controller
         $this->getSharedData($user);
 
         return view('profile-posts', [
-            'posts' => $user->posts()->get(),
+            'posts' => $user->posts()->latest()->get(),
         ]);
         //passa todos os posts, a relação foi definida na classe user
     }
@@ -112,8 +113,25 @@ class UserController extends Controller
         if (auth()->check()) {
             return view('homepage-feed', ['posts' => auth()->user()->feedPosts()->latest()->paginate(4)]);
         } else {
-            return view('home');
+            $postCount = Cache::remember('postCount', 20, function(){
+                return Post::count();
+            });
+            return view('home', ['postCount' => Post::count()]);
         }
+    }
+
+    public function loginApi(Request $request){
+        $incomingFields = $request->validate([
+            'username' => 'required',
+            'password' => 'required'
+        ]);
+
+        if (auth()->attempt($incomingFields)) {
+            $user = User::where('username', $incomingFields['username'])->first();
+            $token = $user->createToken('ourapptoken')->plainTextToken;
+            return $token;
+        }
+        return 'rala';
     }
 
     public function login(Request $request){

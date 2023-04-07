@@ -44,7 +44,7 @@ Route::post('/remove-follow/{user:username}', [FollowController::class, 'removeF
 //Blog
 Route::get('/create-post', [PostController::class, 'showCreateForm'])->middleware('mustBeLoggedIn');// se não estiver autenticado manda pra rota de login
 Route::post('/create-post', [PostController::class, 'storeNewPost']);
-Route::get('/post/{post}', [PostController::class, 'viewSinglePost'])->middleware('mustBeLoggedIn');
+Route::get('/post/{post}', [PostController::class, 'viewSinglePost']);
 Route::delete('/post/{post}', [PostController::class, 'delete'])->middleware('can:delete,post');
 Route::get('/post/{post}/edit', [PostController::class, 'showEditForm'])->middleware('can:update,post');
 Route::put('/post/{post}', [PostController::class, 'actuallyUpdate'])->middleware('can:update,post');
